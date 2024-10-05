@@ -1,20 +1,18 @@
-@import './helpers/variables';
+@use "./helpers//reset.scss";
+@import "./helpers/variables";
 
-
-* ,*:before,*:after{
-    box-sizing: border-box
+*,
+*:before,
+*:after {
+	box-sizing: border-box;
 }
 
-html{
-  font-size: 0.9rem;
-  body{
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    min-height: 100vh;
-  }
-}
-    
-.btn{
-  margin: 5px !important;
+html {
+	font-size: 0.9rem;
+	body {
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		min-height: 100vh;
+	}
 }

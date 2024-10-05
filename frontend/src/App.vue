@@ -1,34 +1,39 @@
 <template>
-  <div id="app">
-    <nav>
-      <img alt="Vue logo" src="@/assets/logo.png"/>
-      <router-link to="/">{{$t('inventory.products')}}</router-link>
-    </nav>
-    <router-view/>
-  </div>
+	<div id="app">
+		<nav id="nav">
+			<img alt="Vue logo" src="@/assets/logo.png" />
+			<router-link to="/">{{ $t("inventory.products") }}</router-link>
+			<button>Tema</button>
+		</nav>
+		<router-view />
+	</div>
 </template>
 
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-align: center;
+	color: #2c3e50;
 }
 
-nav {
-  padding: 30px;
-  img{
-    height: 50px;
-  }
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+#nav {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+	padding: 1rem;
+	img {
+		height: 50px;
+	}
+	a {
+		font-weight: bold;
+		color: #2c3e50;
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+		&.router-link-exact-active {
+			color: #42b983;
+		}
+	}
 }
 </style>
