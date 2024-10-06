@@ -20,14 +20,14 @@ def getAllProducts():
             .all()
         )
         keys_response = [
-            'id_product',
-            'name',
-            'price_unit',
-            'quantity',
-            'id_supplier',
-            'supplier'
+            "id_product",
+            "name",
+            "price_unit",
+            "quantity",
+            "id_supplier",
+            "supplier",
         ]
-        return [ dict(zip(keys_response, item)) for item in response ]
+        return [dict(zip(keys_response, item)) for item in response]
     except Exception as e:
         logging.error(e)
         response = {"message": "Error: " + str(e)}
@@ -39,7 +39,21 @@ def getAllProducts():
 def getOneProduct(id):
     try:
         response = Product.query.filter(Product.id_product == id).first()
-        return response
+        if response:
+            # Serializa el objeto Product en un diccionario
+            return {
+                "id_product": response.id_product,
+                "name": response.name,
+                "quantity": response.quantity,
+                "price_unit": str(
+                    response.price_unit
+                ),  # Convertir a string si es necesario
+                "id_supplier": response.id_supplier,
+            }
+        else:
+            return {
+                "message": "Product not found"
+            }, 404  # Manejo del caso en que no se encuentra el producto
     except Exception as e:
         logging.error(e)
         response = {"message": "Error: " + str(e)}
@@ -49,12 +63,74 @@ def getOneProduct(id):
 
 
 def saveNewProduct(product):
-    return {'message': 'Not Implemented'}, 501
+    try:
+        new_product = Product(
+            name=product["name"],
+            quantity=product["quantity"],
+            price_unit=product["price_unit"],
+            id_supplier=product["id_supplier"],
+        )
+        db.session.add(new_product)
+        db.session.commit()
+        return {"message": "Product created"}, 201
+    except Exception as e:
+        db.session.rollback()
+        logging.error(e)
+        response = {"message": "Error: " + str(e)}
+        return response, 500
 
 
-def updateProduct(product):
-    return {'message': 'Not Implemented'}, 501
+def updateProduct(product, id_product):
+    try:
+        # Obtener el producto existente de la base de datos
+        existing_product = (
+            db.session.query(Product).filter(Product.id_product == id_product).first()
+        )
+
+        # Si no se encuentra el producto, devolver un mensaje de error
+        if not existing_product:
+            return {"message": "Product not found"}, 404
+
+        # Actualizar solo los campos proporcionados
+        for key, value in product.items():
+            if value is not None:  # Solo actualizar si el valor no es None
+                setattr(existing_product, key, value)
+
+        db.session.commit()
+        return {"message": "Product updated"}, 200
+    except Exception as e:
+        db.session.rollback()
+        logging.error(e)
+        response = {"message": "Error: " + str(e)}
+        return response, 500
 
 
 def deleteProduct(id):
-    return {'message': 'Not Implemented'}, 501
+    try:
+        db.session.query(Product).filter(Product.id_product == id).delete()
+        db.session.commit()
+        return {"message": "Product deleted"}, 200
+    except Exception as e:
+        db.session.rollback()
+        logging.error(e)
+        response = {"message": "Error: " + str(e)}
+        return response, 500
+
+
+def getAllSuppliers():
+    try:
+        response = db.session.query(
+            Supplier.id_supplier,
+            Supplier.name,
+        ).all()
+        keys_response = [
+            "id_supplier",
+            "name",
+        ]
+        return [dict(zip(keys_response, item)) for item in response]
+    except Exception as e:
+        logging.error(e)
+        response = {"message": "Error: " + str(e)}
+        return response, 500
+    finally:
+        db.session.close()
