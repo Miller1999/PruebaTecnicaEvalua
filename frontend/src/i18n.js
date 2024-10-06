@@ -1,20 +1,20 @@
 const messages = {
-    en: {
-    },
-    es: {
-        inventory:{
-            products: 'Productos',
-            name: 'Nombre de producto',
-            quantity: 'Cantidad',
-            price: 'Precio',
-            supplier: 'Proveedor',
-            action: 'Acciones',
-            edit: 'Editar Producto',
-            delete: 'Eliminar Producto',
-            add: 'Crear nuevo producto',
-            save: 'Guardar'
-        },
-    }
-}
+	en: {},
+	es: {
+		inventory: {
+			products: "Productos",
+			name: "Nombre de producto",
+			quantity: "Cantidad",
+			price: "Precio",
+			supplier: "Proveedor",
+			action: "Acciones",
+			edit: "Editar Producto",
+			delete: "Eliminar Producto",
+			add: "Crear nuevo producto",
+			save: "Guardar",
+			filter: "Filtrar",
+		},
+	},
+};
 
-export default messages
+export default messages;
