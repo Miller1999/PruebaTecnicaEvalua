@@ -13,6 +13,7 @@ const messages = {
 			add: "Crear nuevo producto",
 			save: "Guardar",
 			filter: "Filtrar",
+			returnToProducts: "Volver a productos",
 		},
 	},
 };

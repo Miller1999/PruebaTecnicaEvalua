@@ -1,5 +1,4 @@
-@use "./helpers//reset.scss";
-@import "./helpers/variables";
+@import "./helpers/_variables.scss";
 
 *,
 *:before,
@@ -14,5 +13,71 @@ html {
 		margin: 0;
 		width: 100%;
 		min-height: 100vh;
+		transition: background-color 0.3s ease, color 0.3s ease;
+	}
+}
+
+.theme-dark {
+	#nav {
+		background-color: $ColorBodyBgDark;
+	}
+	background-color: $ColorBodyBgDark;
+	p,
+	span,
+	strong,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	a,
+	td,
+	th,
+	label {
+		color: $ColorTextDark;
+	}
+	i {
+		color: $ColorTextDark;
+	}
+	color: $ColorTextDark;
+	.modal-content {
+		background-color: $ColorBodyBgDark;
+		.btn-close {
+			background-color: gray;
+		}
+	}
+	.card {
+		background-color: $ColorVueBgDark;
+	}
+}
+.theme-light {
+	#nav {
+		background-color: $ColorBodyBg;
+	}
+	background-color: $ColorBodyBg;
+	p,
+	span,
+	strong,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	a,
+	td,
+	label {
+		color: $ColorText;
+	}
+	color: $ColorText;
+	i {
+		color: $ColorText;
+	}
+	.modal-content {
+		background-color: $ColorBodyBg;
+	}
+	.card {
+		background-color: $ColorVueBg;
 	}
 }

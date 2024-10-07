@@ -10,12 +10,14 @@ const routes = [
 		path: "/",
 		name: "home",
 		component: HomeView,
+		meta: { title: "Home" },
 	},
 	{
 		// path: "*",
 		path: "/:catchAll(.*)",
 		name: "NotFound",
 		component: NotFound,
+		meta: { title: "Not Found" },
 	},
 ];
 
@@ -23,6 +25,11 @@ const router = new VueRouter({
 	mode: "history",
 	base: process.env.BASE_URL,
 	routes,
+});
+
+router.beforeEach((to, from, next) => {
+	document.title = to.meta.title;
+	next();
 });
 
 export default router;

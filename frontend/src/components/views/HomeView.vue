@@ -1,20 +1,20 @@
 <template>
-	<div class="home">
+	<div class="container">
 		<div class="nav">
-			<div class="buttons">
-				<button>
+			<div class="buttons d-flex justify-content-center mb-3">
+				<button class="btn btn-primary">
 					<span>{{ $t("inventory.filter") }}</span>
-					<ion-icon name="funnel-outline"></ion-icon>
+					<i class="bi bi-funnel"></i>
 				</button>
-				<button @click="showModal = true">
+				<button class="btn btn-success" @click="showModal = true">
 					<span>{{ $t("inventory.add") }}</span>
-					<ion-icon name="add-outline"></ion-icon>
+					<i class="bi bi-plus-circle"></i>
 				</button>
 			</div>
 		</div>
 		<!-- large screens -->
-		<table v-if="isLargeScreen" class="table">
-			<thead>
+		<table v-if="isLargeScreen" class="table table-center">
+			<thead class="">
 				<tr>
 					<th scope="col">{{ $t("inventory.name") }}</th>
 					<th scope="col">{{ $t("inventory.quantity") }}</th>
@@ -29,47 +29,54 @@
 					<td>{{ product.quantity }}</td>
 					<td>{{ Math.round(product.price_unit * 100) / 100 }}</td>
 					<td>{{ product.supplier }}</td>
-					<td>
-						<b-button @click="editProduct(product.id_product)">
-							<ion-icon name="create-outline"></ion-icon>
-						</b-button>
-						<b-button
-							@click="deleteProduct(product.id_product)"
-							variant="secondary"
+					<td class="table-buttons">
+						<button
+							class="btn btn-primary btn-sm"
+							@click="editProduct(product.id_product)"
 						>
-							<ion-icon name="trash-outline"></ion-icon>
-						</b-button>
+							<i class="bi bi-pencil"></i>
+						</button>
+						<button
+							class="btn btn-danger btn-sm"
+							@click="deleteProduct(product.id_product)"
+						>
+							<i class="bi bi-trash"></i>
+						</button>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 		<!-- small screens -->
-		<section v-else class="card__container">
+		<section v-else class="row">
 			<article v-for="(product, index) in products" :key="index" class="card">
-				<h2>{{ $t("inventory.name") }}: {{ product.name }}</h2>
-				<p>
-					<span>{{ $t("inventory.quantity") }}:</span> {{ product.quantity }}
+				<div class="card-body"></div>
+				<h5 class="card-title">
+					{{ $t("inventory.name") }}: {{ product.name }}
+				</h5>
+				<p class="card-text">
+					<strong>{{ $t("inventory.quantity") }}:</strong>
+					{{ product.quantity }}
 				</p>
-				<p>
-					<span>{{ $t("inventory.price") }}:</span> {{ product.price }}
+				<p class="card-text">
+					<span>{{ $t("inventory.price") }}:</span>
+					{{ Math.round(product.price_unit * 100) / 100 }}
 				</p>
-				<p>
+				<p class="card-text">
 					<span>{{ $t("inventory.supplier") }}:</span> {{ product.supplier }}
 				</p>
 				<div class="card__actions">
-					<b-button
-						@click="
-							$router.push({
-								name: 'product',
-								params: { idProduct: product.id_product },
-							})
-						"
+					<button
+						class="btn btn-primary btn-sm"
+						@click="editProduct(product.id_product)"
 					>
-						<ion-icon name="create-outline"></ion-icon>
-					</b-button>
-					<b-button @click="deleteProduct(product.id_product)">
-						<ion-icon name="trash-outline"></ion-icon>
-					</b-button>
+						<i class="bi bi-pencil"></i>
+					</button>
+					<button
+						class="btn btn-danger btn-sm"
+						@click="deleteProduct(product.id_product)"
+					>
+						<i class="bi bi-trash"></i>
+					</button>
 				</div>
 			</article>
 		</section>
@@ -89,6 +96,7 @@
 				<input
 					id="name"
 					type="text"
+					class="form-control"
 					v-model="newProduct.name"
 					placeholder="Nombre del producto"
 					@input="clearError('name')"
@@ -100,6 +108,7 @@
 				<input
 					id="quantity"
 					type="number"
+					class="form-control"
 					v-model="newProduct.quantity"
 					placeholder="Cantidad"
 					@input="clearError('quantity')"
@@ -111,6 +120,7 @@
 				<input
 					id="price"
 					type="number"
+					class="form-control"
 					v-model="newProduct.price_unit"
 					placeholder="Precio"
 					@input="clearError('price_unit')"
@@ -122,7 +132,11 @@
 					</p>
 				</div>
 
-				<select id="id_supplier" v-model="newProduct.id_supplier">
+				<select
+					id="id_supplier"
+					class="form-control"
+					v-model="newProduct.id_supplier"
+				>
 					<option value="" disabled selected>Selecciona un proveedor</option>
 					<option
 						v-for="supplier in suppliers"
@@ -133,7 +147,7 @@
 					</option>
 				</select>
 
-				<button type="submit">Añadir</button>
+				<button type="submit" class="btn btn-primary mt-3">Añadir</button>
 			</form>
 		</ProductCreate>
 	</div>
@@ -301,130 +315,36 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../stylessheets/helpers/variables";
-/* Large screens */
-.home {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-table {
-	width: 90%;
-	max-width: 1200px;
-	margin: 1rem 0;
-	border-collapse: collapse;
-	border-spacing: 0;
-	font-size: 1rem;
-	thead {
-		th {
-			text-align: center;
-			padding: 0.5rem;
-			background-color: $ColorBodyBg;
-		}
-	}
-	tbody {
-		tr {
-			border-bottom: 1px solid #ddd;
-			td {
-				padding: 0.5rem;
-				text-align: center;
-			}
-			td:first-child {
-				min-width: 250px;
-				max-width: 250px;
-			}
-			td:last-child {
-				display: flex;
-				gap: 1rem;
-				justify-content: center;
-				button {
-					padding: 0;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					width: 50px;
-					height: 50px;
-					border: 1px solid transparent;
-					background-color: transparent;
-					ion-icon {
-						font-size: 1.5rem;
-						color: #000;
-					}
-				}
-				button:last-child {
-					ion-icon {
-						color: red;
-					}
-				}
-				button:hover {
-					background-color: transparent;
-					border: 1px solid gray;
-				}
-			}
-		}
-		tr:nth-child(even) {
-			background-color: $ColorVueBg;
-		}
+.container {
+	margin-bottom: 7rem;
+	@media (max-width: 767px) {
+		margin-top: 100px;
 	}
 }
 
-/* Small screens */
-.card__container {
+.row {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 1rem;
-	width: 100%;
-	margin: 1rem 0 3rem 0;
+}
+.nav {
+	justify-content: center;
 }
 .card {
-	min-width: 250px;
-	max-width: 250px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 1rem;
-	padding: 1rem;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
-	transition: all 0.3s ease;
-
-	&:hover {
-		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.26);
-	}
-	h2 {
-		font-size: 1rem;
-		font-weight: 900;
-	}
-	p {
-		span {
-			font-weight: bold;
-		}
-	}
+	width: 90%;
 	.card__actions {
 		display: flex;
-		justify-content: space-between;
+		justify-content: center;
 		align-items: center;
 		gap: 1rem;
-		button {
-			width: 50px;
-			height: 50px;
-			border: 1px solid transparent;
-			background-color: transparent;
-			ion-icon {
-				font-size: 1.5rem;
-				color: #000;
-			}
-		}
-		button:last-child {
-			ion-icon {
-				color: red;
-			}
-		}
+		margin: 1rem 0;
 	}
 }
-.card:nth-child(even) {
-	background-color: $ColorVueBg;
+.table-buttons {
+	button:last-child {
+		margin-left: 1rem;
+	}
 }
 .error {
 	color: red;
@@ -448,10 +368,8 @@ table {
 		width: 50px;
 		height: 50px;
 		border: 1px solid transparent;
-		background-color: var(--bs-blue);
-		ion-icon {
+		i {
 			font-size: 1.5rem;
-			color: #000;
 		}
 	}
 	span {
@@ -466,9 +384,19 @@ table {
 		span {
 			display: block;
 		}
-		ion-icon {
+		i {
 			display: none;
 		}
 	}
+}
+.form-group {
+	margin-bottom: 1rem;
+	text-align: left;
+	label {
+		font-weight: bold;
+	}
+}
+input {
+	margin-bottom: 1rem;
 }
 </style>
