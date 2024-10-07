@@ -1,7 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
-import store from "./store";
 import {
 	ValidationProvider,
 	ValidationObserver,
@@ -55,7 +54,6 @@ Vue.component("ValidationProvider", ValidationProvider);
 
 new Vue({
 	router,
-	store,
 	i18n,
 	components: {
 		ValidationProvider,

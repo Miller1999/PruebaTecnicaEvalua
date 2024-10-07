@@ -154,56 +154,69 @@
 </template>
 
 <script>
-import VAPI from "@/http_common";
-import { HTTP_STATUS, SERVICE_NAMES } from "@/app_constants";
-import ProductCreate from "./ProductCreate.vue";
+import VAPI from "@/http_common"; // Importa la configuración de Axios para las peticiones HTTP
+import { HTTP_STATUS, SERVICE_NAMES } from "@/app_constants"; // Importa constantes de estado y nombres de servicios
+import ProductCreate from "./ProductCreate.vue"; // Importa el componente ProductCreate
+
 export default {
+	// Nombre del componente
 	name: "HomeView",
+
+	// Componentes hijos utilizados en este componente
 	components: {
 		ProductCreate,
 	},
+
 	data() {
 		return {
-			products: [],
-			suppliers: [],
-			isLargeScreen: true,
-			isEditing: false,
-			showModal: false,
+			// Estado local del componente
+			products: [], // Lista de productos
+			suppliers: [], // Lista de proveedores
+			isLargeScreen: true, // Indica si la pantalla es grande
+			isEditing: false, // Indica si se está en modo de edición
+			showModal: false, // Indica si el modal debe ser visible
+			// Datos del nuevo producto
 			newProduct: {
-				name: "",
-				price_unit: null,
-				id_supplier: null,
-				quantity: null,
+				name: "", // Nombre del producto
+				price_unit: null, // Precio por unidad del producto
+				id_supplier: null, // ID del proveedor
+				quantity: null, // Cantidad del producto
 			},
-			errors: {},
+			errors: {}, // Objeto para almacenar errores de validación
 		};
 	},
 	mounted() {
-		this.getAllSuppliers();
-		this.getAllProducts();
-		this.checkScreenSize();
+		// Se ejecuta al montar el componente
+		this.getAllSuppliers(); // Obtiene todos los proveedores
+		this.getAllProducts(); // Obtiene todos los productos
+		this.checkScreenSize(); // Verifica el tamaño de la pantalla
+		// Agrega un event listener para verificar el tamaño de la pantalla al redimensionar
 		window.addEventListener("resize", this.checkScreenSize);
 	},
 	computed: {
+		// Título del formulario basado en el estado de edición
 		formTitle() {
 			return this.isEditing
-				? this.$t("inventory.edit")
-				: this.$t("inventory.add");
+				? this.$t("inventory.edit") // Devuelve "Editar" si está en modo de edición
+				: this.$t("inventory.add"); // Devuelve "Agregar" si no está en modo de edición
 		},
 	},
 	methods: {
+		// Obtiene todos los productos desde el servidor
 		async getAllProducts() {
 			try {
 				let response = await VAPI.get(`${SERVICE_NAMES.INVENTORY}/get-all`);
 				if (response.status == HTTP_STATUS.OK) {
-					this.products = response.data;
+					this.products = response.data; // Almacena los productos en el estado local
 				}
 			} catch (error) {
-				console.error(error);
+				console.error(error); // Maneja errores de la petición
 			}
 		},
+		// Guarda un nuevo producto o actualiza uno existente
 		async saveProduct() {
-			this.errors = {};
+			this.errors = {}; // Resetea los errores
+			// Validación de los campos del nuevo producto
 			if (!this.newProduct.name) {
 				this.errors.name = "El nombre del producto es requerido";
 			}
@@ -217,17 +230,18 @@ export default {
 				this.errors.id_supplier = "El proveedor es requerido";
 			}
 
+			// Si no hay errores, realiza la petición para guardar o actualizar el producto
 			if (Object.keys(this.errors).length === 0) {
 				try {
 					let response;
 					if (this.isEditing) {
-						// Si estamos editando, llama al método PUT
+						// Si se está editando, realiza una petición PUT
 						response = await VAPI.put(
 							`${SERVICE_NAMES.INVENTORY}/${this.newProduct.id_product}`,
 							this.newProduct
 						);
 					} else {
-						// Si estamos creando, llama al método POST
+						// Si se está creando, realiza una petición POST
 						response = await VAPI.post(
 							`${SERVICE_NAMES.INVENTORY}/`,
 							this.newProduct
@@ -238,6 +252,7 @@ export default {
 						(this.isEditing ? HTTP_STATUS.OK : HTTP_STATUS.CREATED)
 					) {
 						this.showModal = false; // Cierra el modal
+						// Resetea el objeto newProduct
 						this.newProduct = {
 							name: "",
 							price_unit: null,
@@ -247,12 +262,13 @@ export default {
 						this.isEditing = false; // Resetea el estado de edición
 					}
 				} catch (error) {
-					console.error(error);
+					console.error(error); // Maneja errores de la petición
 				}
 			}
 			await this.getAllProducts(); // Actualiza la lista de productos
 		},
 
+		// Abre el modal para editar un producto
 		async editProduct(idProduct) {
 			this.showModal = true; // Abre el modal
 			this.isEditing = true; // Marca como editando
@@ -266,46 +282,53 @@ export default {
 					};
 				}
 			} catch (error) {
-				console.error(error);
+				console.error(error); // Maneja errores de la petición
 			}
 		},
+
+		// Elimina un producto
 		async deleteProduct(idProduct) {
 			try {
 				let response = await VAPI.delete(
 					`${SERVICE_NAMES.INVENTORY}/${idProduct}`
 				);
 				if (response.status == HTTP_STATUS.NO_CONTENT) {
-					await this.getAllProducts();
+					await this.getAllProducts(); // Actualiza la lista de productos
 				}
 			} catch (error) {
-				console.error(error);
+				console.error(error); // Maneja errores de la petición
 			}
-			await this.getAllProducts();
+			await this.getAllProducts(); // Asegura que la lista esté actualizada
 		},
+
+		// Obtiene todos los proveedores desde el servidor
 		async getAllSuppliers() {
 			try {
 				let response = await VAPI.get(
 					`${SERVICE_NAMES.INVENTORY}/get-all-suppliers`
 				);
 				if (response.status == HTTP_STATUS.OK) {
-					this.suppliers = response.data;
+					this.suppliers = response.data; // Almacena los proveedores en el estado local
 				}
 			} catch (error) {
-				console.error(error);
+				console.error(error); // Maneja errores de la petición
 			}
 		},
+
+		// Verifica el tamaño de la pantalla
 		checkScreenSize() {
-			// Establece si la pantalla es grande o pequeña
-			this.isLargeScreen = window.innerWidth > 767;
+			this.isLargeScreen = window.innerWidth > 767; // Establece si la pantalla es grande o pequeña
 		},
+
+		// Limpia los errores de un campo específico
 		clearError(field) {
 			if (this.errors[field]) {
 				if (field === "quantity" || field === "price_unit") {
 					if (this.newProduct[field] > 0) {
-						delete this.errors[field];
+						delete this.errors[field]; // Elimina el error si el valor es válido
 					}
 				} else if (this.newProduct[field]) {
-					delete this.errors[field];
+					delete this.errors[field]; // Elimina el error si el valor es válido
 				}
 			}
 		},

@@ -1,9 +1,13 @@
 <template>
 	<div>
+		<!-- Imagen que se muestra cuando no se encuentra la página -->
+
 		<img
 			src="https://cdn.dribbble.com/users/1022481/screenshots/3018253/404-snow.gif"
 			alt="Not found"
 		/>
+		<!-- Botón que redirige a la página principal de productos -->
+
 		<router-link to="/"
 			><button>{{ $t("inventory.returnToProducts") }}</button></router-link
 		>
