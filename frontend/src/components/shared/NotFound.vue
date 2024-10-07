@@ -2,10 +2,7 @@
 	<div>
 		<!-- Imagen que se muestra cuando no se encuentra la página -->
 
-		<img
-			src="https://cdn.dribbble.com/users/1022481/screenshots/3018253/404-snow.gif"
-			alt="Not found"
-		/>
+		<img src="../../assets/404NotFound.png" alt="Not found" />
 		<!-- Botón que redirige a la página principal de productos -->
 
 		<router-link to="/"
@@ -27,6 +24,7 @@ div {
 	justify-content: center;
 	align-items: center;
 	width: 100%;
+	margin-top: 5rem;
 	img {
 		max-width: 500px;
 		width: 100%;
