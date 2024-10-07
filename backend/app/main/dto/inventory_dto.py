@@ -1,39 +1,47 @@
 from flask_restx import Namespace, fields
-from sqlalchemy import Integer
 
 
 class InventoryDto:
-    api = Namespace("inventory", description="inventory related operations")
+    api = Namespace(
+        "inventory", description="Operaciones relacionadas con el inventario"
+    )
 
     product_with_supplier = api.model(
         "product_supplier",
         {
-            "id_product": fields.Integer(required=True, description="prodict id"),
-            "name": fields.String(required=True, description="product name"),
-            "quantity": fields.String(required=True, description="quantity product"),
-            "price_unit": fields.String(required=True, description="product price"),
-            "id_supplier": fields.Integer(
-                required=True, description="prodict supplier id"
+            "id_product": fields.Integer(required=True, description="ID del producto"),
+            "name": fields.String(required=True, description="Nombre del producto"),
+            "quantity": fields.Integer(required=True, description="Cantidad en stock"),
+            "price_unit": fields.Float(
+                required=True, description="Precio unitario del producto"
             ),
-            "supplier": fields.String(required=True, description="supplier name"),
+            "id_supplier": fields.Integer(
+                required=True, description="ID del proveedor"
+            ),
+            "supplier": fields.String(
+                required=True, description="Nombre del proveedor"
+            ),
         },
     )
 
     product = api.model(
         "product",
         {
-            "id_product": fields.Integer(required=True, description="prodict id"),
-            "name": fields.String(required=True, description="product name"),
-            "quantity": fields.String(required=True, description="quantity product"),
-            "price_unit": fields.String(required=True, description="product price"),
+            "id_product": fields.Integer(required=True, description="ID del producto"),
+            "name": fields.String(required=True, description="Nombre del producto"),
+            "quantity": fields.Integer(required=True, description="Cantidad en stock"),
+            "price_unit": fields.Float(
+                required=True, description="Precio unitario del producto"
+            ),
         },
     )
+
     supplier = api.model(
         "supplier",
         {
             "id_supplier": fields.Integer(
-                required=True, description="prodict supplier id"
+                required=True, description="ID del proveedor"
             ),
-            "name": fields.String(required=True, description="supplier name"),
+            "name": fields.String(required=True, description="Nombre del proveedor"),
         },
     )
