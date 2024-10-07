@@ -1,35 +1,72 @@
 <template>
 	<div class="container">
-		<div class="nav">
-			<div class="buttons d-flex justify-content-center mb-3">
-				<button class="btn btn-primary">
-					<span>{{ $t("inventory.filter") }}</span>
-					<i class="bi bi-funnel"></i>
-				</button>
-				<button class="btn btn-success" @click="showModal = true">
-					<span>{{ $t("inventory.add") }}</span>
-					<i class="bi bi-plus-circle"></i>
-				</button>
+		<div v-if="isLoading" class="loader">
+			<div class="spinner-border text-primary" role="status">
+				<span class="sr-only">Loading...</span>
 			</div>
 		</div>
-		<!-- large screens -->
-		<table v-if="isLargeScreen" class="table table-center">
-			<thead class="">
-				<tr>
-					<th scope="col">{{ $t("inventory.name") }}</th>
-					<th scope="col">{{ $t("inventory.quantity") }}</th>
-					<th scope="col">{{ $t("inventory.price") }}</th>
-					<th scope="col">{{ $t("inventory.supplier") }}</th>
-					<th scope="col">{{ $t("inventory.action") }}</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr scope="row" v-for="(product, index) in products" :key="index">
-					<td>{{ product.name }}</td>
-					<td>{{ product.quantity }}</td>
-					<td>{{ Math.round(product.price_unit * 100) / 100 }}</td>
-					<td>{{ product.supplier }}</td>
-					<td class="table-buttons">
+		<div v-else>
+			<div class="nav">
+				<div class="buttons d-flex justify-content-center mb-3">
+					<button class="btn btn-success" @click="showModal = true">
+						<span>{{ $t("inventory.add") }}</span>
+						<i class="bi bi-plus-circle"></i>
+					</button>
+				</div>
+			</div>
+			<!-- large screens -->
+			<table v-if="isLargeScreen" class="table table-center">
+				<thead class="">
+					<tr>
+						<th scope="col">{{ $t("inventory.name") }}</th>
+						<th scope="col">{{ $t("inventory.quantity") }}</th>
+						<th scope="col">{{ $t("inventory.price") }}</th>
+						<th scope="col">{{ $t("inventory.supplier") }}</th>
+						<th scope="col">{{ $t("inventory.action") }}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr scope="row" v-for="(product, index) in products" :key="index">
+						<td>{{ product.name }}</td>
+						<td>{{ product.quantity }}</td>
+						<td>{{ Math.round(product.price_unit * 100) / 100 }}</td>
+						<td>{{ product.supplier }}</td>
+						<td class="table-buttons">
+							<button
+								class="btn btn-primary btn-sm"
+								@click="editProduct(product.id_product)"
+							>
+								<i class="bi bi-pencil"></i>
+							</button>
+							<button
+								class="btn btn-danger btn-sm"
+								@click="deleteProduct(product.id_product)"
+							>
+								<i class="bi bi-trash"></i>
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- small screens -->
+			<section v-else class="row">
+				<article v-for="(product, index) in products" :key="index" class="card">
+					<div class="card-body"></div>
+					<h5 class="card-title">
+						{{ $t("inventory.name") }}: {{ product.name }}
+					</h5>
+					<p class="card-text">
+						<strong>{{ $t("inventory.quantity") }}:</strong>
+						{{ product.quantity }}
+					</p>
+					<p class="card-text">
+						<span>{{ $t("inventory.price") }}:</span>
+						{{ Math.round(product.price_unit * 100) / 100 }}
+					</p>
+					<p class="card-text">
+						<span>{{ $t("inventory.supplier") }}:</span> {{ product.supplier }}
+					</p>
+					<div class="card__actions">
 						<button
 							class="btn btn-primary btn-sm"
 							@click="editProduct(product.id_product)"
@@ -42,44 +79,11 @@
 						>
 							<i class="bi bi-trash"></i>
 						</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<!-- small screens -->
-		<section v-else class="row">
-			<article v-for="(product, index) in products" :key="index" class="card">
-				<div class="card-body"></div>
-				<h5 class="card-title">
-					{{ $t("inventory.name") }}: {{ product.name }}
-				</h5>
-				<p class="card-text">
-					<strong>{{ $t("inventory.quantity") }}:</strong>
-					{{ product.quantity }}
-				</p>
-				<p class="card-text">
-					<span>{{ $t("inventory.price") }}:</span>
-					{{ Math.round(product.price_unit * 100) / 100 }}
-				</p>
-				<p class="card-text">
-					<span>{{ $t("inventory.supplier") }}:</span> {{ product.supplier }}
-				</p>
-				<div class="card__actions">
-					<button
-						class="btn btn-primary btn-sm"
-						@click="editProduct(product.id_product)"
-					>
-						<i class="bi bi-pencil"></i>
-					</button>
-					<button
-						class="btn btn-danger btn-sm"
-						@click="deleteProduct(product.id_product)"
-					>
-						<i class="bi bi-trash"></i>
-					</button>
-				</div>
-			</article>
-		</section>
+					</div>
+				</article>
+			</section>
+		</div>
+
 		<ProductCreate
 			:isVisible="showModal"
 			:isEditing="isEditing"
@@ -175,6 +179,7 @@ export default {
 			isLargeScreen: true, // Indica si la pantalla es grande
 			isEditing: false, // Indica si se está en modo de edición
 			showModal: false, // Indica si el modal debe ser visible
+			isLoading: false, // Indica si se está cargando los datos
 			// Datos del nuevo producto
 			newProduct: {
 				name: "", // Nombre del producto
@@ -204,6 +209,7 @@ export default {
 	methods: {
 		// Obtiene todos los productos desde el servidor
 		async getAllProducts() {
+			this.isLoading = true; // Marca como cargando
 			try {
 				let response = await VAPI.get(`${SERVICE_NAMES.INVENTORY}/get-all`);
 				if (response.status == HTTP_STATUS.OK) {
@@ -211,6 +217,8 @@ export default {
 				}
 			} catch (error) {
 				console.error(error); // Maneja errores de la petición
+			} finally {
+				this.isLoading = false; // Marca como no cargando
 			}
 		},
 		// Guarda un nuevo producto o actualiza uno existente
@@ -303,6 +311,7 @@ export default {
 
 		// Obtiene todos los proveedores desde el servidor
 		async getAllSuppliers() {
+			this.isLoading = true; // Marca como cargando
 			try {
 				let response = await VAPI.get(
 					`${SERVICE_NAMES.INVENTORY}/get-all-suppliers`
@@ -312,6 +321,8 @@ export default {
 				}
 			} catch (error) {
 				console.error(error); // Maneja errores de la petición
+			} finally {
+				this.isLoading = false; // Marca como no cargando
 			}
 		},
 
@@ -421,5 +432,11 @@ export default {
 }
 input {
 	margin-bottom: 1rem;
+}
+.loader {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
 }
 </style>
